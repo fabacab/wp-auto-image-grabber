@@ -64,9 +64,11 @@ class WP_AutoImageGrabber {
         $html = file_get_contents($uri);
 
         $xpaths = array(
+                    '//table[contains(@class, "image")]//img[1]', // blogs.laweekly.com
                     '//*[@id="content"]//figure//img[1]', // The Guardian
                     '//*[@id="content"]//img[1]',         // TechYum
                     '//*[contains(@class, "content")]//img[1]', // Gawker
+                    '//*[@class="entry"]//img[1]', // just a common pattern
                     '//*[@class="entryContent"]//img[1]', // ThinkProgress
                     '//*[@class="entry-content"]//*[@class="image"]/img[1]', // NYMag.com
                     '//*[@class="storyimage"]/img[1]'     // Xtra.ca
