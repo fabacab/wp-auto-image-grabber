@@ -47,8 +47,6 @@ class WP_AutoImageGrabber {
      * Determine destination.
      */
     function findDestinationPage ($content) {
-        // TODO: This str_replace would be unnecessary if I can figure out why
-        //       WordPress is stripping the option at a double quote.
         $query = $this->options['dst_page'];
         $links = $this->runXPathQueryOnDom($query, $content);
         foreach ($links as $link) {
@@ -96,8 +94,6 @@ add_action('admin_menu', 'WP_AutoImageGrabber_menu');
 
 /**
  * Provides plugin-wide options screen.
- *
- * TODO: Provide options screen to variablize the XPath functions.
  */
 function WP_AutoImageGrabber_options () {
     add_option('wp_aig_options', get_option('wp_aig_options'));
