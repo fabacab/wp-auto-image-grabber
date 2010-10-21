@@ -69,12 +69,14 @@ class WP_AutoImageGrabber {
                     '//table[contains(@class, "image")]//img[1]', // blogs.laweekly.com
                     '//*[@id="content"]//figure//img[1]', // The Guardian
                     '//*[@id="content"]//img[1]',         // TechYum
+                    '//*[@id="articlecontent"]//img[contains(@class, "thumb")][1]',  // SFGate.com
                     '//*[contains(@class, "mainimage")]//img[1]', // Newsweek
                     '//*[contains(@class, "content")]//img[1]', // Gawker
                     '//*[@class="entry"]//img[1]', // just a common pattern
                     '//*[@class="entryContent"]//img[1]', // ThinkProgress
                     '//*[@class="entry-content"]//*[@class="image"]/img[1]', // NYMag.com
-                    '//*[@class="storyimage"]/img[1]'     // Xtra.ca
+                    '//*[@class="storyimage"]/img[1]', // Xtra.ca
+                    '//*[contains(@class, "hentry")]//img[1]' // microformat pattern
                 );
         foreach ($xpaths as $xpath) {
             $results = $this->runXPathQueryOnDOM($xpath, $html);
