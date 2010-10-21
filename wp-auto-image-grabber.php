@@ -37,6 +37,8 @@ class WP_AutoImageGrabber {
         $img = $this->findMainImage($uri);
         if (false === $img) { return $content; } // no match, do not filter
         $src = $img->getAttribute('src');
+        $src = $this->maybeMakeFQURL($src, $uri);
+
         $alt = $img->getAttribute('alt');
 
         // Prepend the appropriate image code
@@ -88,6 +90,23 @@ class WP_AutoImageGrabber {
         @$dom   = DOMDocument::loadHTML($html);
         $xpath  = new DOMXpath($dom);
         return $xpath->query($query);
+    }
+
+    /**
+     * Make a fully-qualified URL if necessary.
+     *
+     * @param string url The suspected partial URL to maybe make fully-qualified.
+     * @param string referer The referring URL from which the partial was extracted.
+     *
+     * @return string The resolved, fully-qualified URL, or the original one.
+     */
+    function maybeMakeFQURL ($url, $referer) {
+        if ('/' === substr($url, 0, 1)) {
+            $x = parse_url($referer);
+            return $x['scheme'] . '://' . $x['host'] . $url;
+        } else {
+            return $url;
+        }
     }
 }
 
