@@ -64,8 +64,12 @@ class WP_AutoImageGrabber {
         $html = file_get_contents($uri);
 
         $xpaths = array(
-                    '//*[@id="content"]//img[1]',     // The Guardian uses this pattern
-                    '//*[@class="storyimage"]/img[1]' // Xtra.ca uses this pattern
+                    '//*[@id="content"]//figure//img[1]', // The Guardian
+                    '//*[@id="content"]//img[1]',         // TechYum
+                    '//*[contains(@class, "content")]//img[1]', // Gawker
+                    '//*[@class="entryContent"]//img[1]', // ThinkProgress
+                    '//*[@class="entry-content"]//*[@class="image"]/img[1]', // NYMag.com
+                    '//*[@class="storyimage"]/img[1]'     // Xtra.ca
                 );
         foreach ($xpaths as $xpath) {
             $results = $this->runXPathQueryOnDOM($xpath, $html);
