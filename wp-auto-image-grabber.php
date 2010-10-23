@@ -63,7 +63,7 @@ class WP_AutoImageGrabber {
      * @return object DOM element of matched image, false if no match.
      */
     function findMainImage ($uri) {
-        $html = file_get_contents($uri);
+        $html = @file_get_contents($uri);
 
         $xpaths = array(
                     '//table[contains(@class, "image")]//img[1]', // blogs.laweekly.com
@@ -89,8 +89,12 @@ class WP_AutoImageGrabber {
      * Run an XPath query.
      */
     function runXPathQueryOnDOM ($query, $html) {
-        @$dom   = DOMDocument::loadHTML($html);
-        $xpath  = new DOMXpath($dom);
+        try {
+            @$dom   = DOMDocument::loadHTML($html);
+            $xpath  = new DOMXpath($dom);
+        } catch (Exception $e) {
+            // fail silently, i.e., do nothing
+        }
         return $xpath->query($query);
     }
 
