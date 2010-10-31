@@ -51,6 +51,9 @@ No, not at this time, but I'm hoping to add this optional capability to future v
 
 == Changelog ==
 
+= 0.2 =
+* Minor code clarity improvements, more comprehensive "main image" pattern matching.
+
 = 0.1 =
 * Initial development version.
 
