@@ -7,11 +7,11 @@ Requires at least: 2.6
 Tested up to: 3.0.1
 Stable tag: 0.1
 
-Inserts an image from a page you link to at the start of your blog post. A simple algorithm tries to grab a "main content" image (rather than an advertisement), automatically providing your post with relevant, attributed artwork.
+Inserts an image from a page you link to at the start of your blog post. A simple algorithm tries to get a "main content" image, not an ad.
 
 == Description ==
 
-Inserts an image from a page you link to at the start of your blog post. A simple algorithm tries to grab a "main content" image (rather than an advertisement), automatically providing your post with relevant, attributed artwork. This is especially useful for bloggers who syndicate posts to sites like Facebook or Digg, which use the first image in a post as a thumbnail for their post.
+Inserts an image from a page you link to at the start of your blog post. A simple algorithm tries to get a "main content" image (rather than an advertisement), automatically providing your post with relevant, attributed artwork. This is especially useful for bloggers who syndicate posts to sites like Facebook or Digg, which use the first image in a post as a thumbnail for their post.
 
 This plugin **requires PHP 5**; sites running on PHP 4 will produce fatal errors.
 
