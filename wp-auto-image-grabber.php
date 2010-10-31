@@ -3,14 +3,14 @@
 Plugin Name: WP-Auto Image Grabber
 Plugin URI: http://maymay.net/blog/projects/wp-auto-image-grabber/
 Description: Fetches images from a remote source and displays them by deep-linking to the source.
-Version: 0.1
+Version: 0.2
 Author: Meitar Moscovitz
 Author URI: http://maymay.net/
 */
 
 class WP_AutoImageGrabber {
 
-    var $options;
+    var $options; /**< Array of plugin options. */
 
     /**
      * Constructor
@@ -49,8 +49,12 @@ class WP_AutoImageGrabber {
      * Determine destination.
      */
     function findDestinationPage ($content) {
-        $query = $this->options['dst_page'];
-        $links = $this->runXPathQueryOnDom($query, $content);
+        $xquery = $this->options['dst_page'];
+        try {
+            @$dom  = DOMDocument::loadHTML($content);
+            $xpath = new DOMXpath($dom);
+        } catch (Exception $e) { /* fail silently; do nothing */ }
+        $links = $xpath->query($xquery);
         foreach ($links as $link) {
             // Return in loop as we only need whatever the first item is, anyway.
             return ($link->getAttribute('href')) ? $link->getAttribute('href') : false;
@@ -70,6 +74,7 @@ class WP_AutoImageGrabber {
                     '//*[@id="content"]//figure//img[1]', // The Guardian
                     '//*[@id="content"]//img[1]',         // TechYum
                     '//*[@id="articlecontent"]//img[contains(@class, "thumb")][1]',  // SFGate.com
+                    '//*[contains(@class, "articleBody")]//img[1]', // CafeMom.com
                     '//*[contains(@class, "mainimage")]//img[1]', // Newsweek
                     '//*[contains(@class, "content")]//img[1]', // Gawker
                     '//*[@class="entry"]//img[1]', // just a common pattern
@@ -78,24 +83,15 @@ class WP_AutoImageGrabber {
                     '//*[@class="storyimage"]/img[1]', // Xtra.ca
                     '//*[contains(@class, "hentry")]//img[1]' // microformat pattern
                 );
-        foreach ($xpaths as $xpath) {
-            $results = $this->runXPathQueryOnDOM($xpath, $html);
+        try {
+            @$dom  = DOMDocument::loadHTML($html);
+            $xpath = new DOMXpath($dom);
+        } catch (Exception $e) { /* fail silently; do nothing */ }
+        foreach ($xpaths as $xquery) {
+            $results = $xpath->query($xquery);
             if (0 < $results->length) { return $results->item(0); }
         }
         return false;
-    }
-
-    /**
-     * Run an XPath query.
-     */
-    function runXPathQueryOnDOM ($query, $html) {
-        try {
-            @$dom   = DOMDocument::loadHTML($html);
-            $xpath  = new DOMXpath($dom);
-        } catch (Exception $e) {
-            // fail silently, i.e., do nothing
-        }
-        return $xpath->query($query);
     }
 
     /**
