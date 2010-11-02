@@ -3,7 +3,7 @@
 Plugin Name: WP-Auto Image Grabber
 Plugin URI: http://maymay.net/blog/projects/wp-auto-image-grabber/
 Description: Fetches images from a remote source and displays them by deep-linking to the source.
-Version: 0.2
+Version: 0.3
 Author: Meitar Moscovitz
 Author URI: http://maymay.net/
 */
@@ -18,8 +18,31 @@ class WP_AutoImageGrabber {
     function WP_AutoImageGrabber () {
         $this->options = get_option('wp_aig_options', array(
                 'img_class' => 'wp-auto-image-grabber alignright',
-                'dst_page'  => '//a[1]'
+                'dst_page'  => '//a[1]',
+                'img_pats'  => implode("\n", array( // default patterns as string
+                    '//table[contains(@class, "image")]//img[1]', // blogs.laweekly.com
+                    '//*[@id="content"]//figure//img[1]', // The Guardian
+                    '//*[@id="content"]//img[1]',         // TechYum
+                    '//*[@id="articlecontent"]//img[contains(@class, "thumb")][1]',  // SFGate.com
+                    '//*[contains(@class, "articleBody")]//img[1]', // CafeMom.com
+                    '//*[contains(@class, "mainimage")]//img[1]', // Newsweek
+                    '//*[contains(@class, "content")]//img[1]', // Gawker
+                    '//*[@class="entry"]//img[1]', // just a common pattern
+                    '//*[@class="entryContent"]//img[1]', // ThinkProgress
+                    '//*[@class="entry-content"]//*[@class="image"]/img[1]', // NYMag.com
+                    '//*[@class="storyimage"]/img[1]', // Xtra.ca
+                    '//*[contains(@class, "hentry")]//img[1]' // microformat pattern
+                ))
             ));
+    }
+
+    /**
+     * WordPress Activation Hook callback
+     */
+    function activate () {
+        if (!get_option('wp_aig_options')) {
+            add_option('wp_aig_options', $this->options);
+        }
     }
 
     /**
@@ -69,20 +92,8 @@ class WP_AutoImageGrabber {
     function findMainImage ($uri) {
         $html = @file_get_contents($uri);
 
-        $xpaths = array(
-                    '//table[contains(@class, "image")]//img[1]', // blogs.laweekly.com
-                    '//*[@id="content"]//figure//img[1]', // The Guardian
-                    '//*[@id="content"]//img[1]',         // TechYum
-                    '//*[@id="articlecontent"]//img[contains(@class, "thumb")][1]',  // SFGate.com
-                    '//*[contains(@class, "articleBody")]//img[1]', // CafeMom.com
-                    '//*[contains(@class, "mainimage")]//img[1]', // Newsweek
-                    '//*[contains(@class, "content")]//img[1]', // Gawker
-                    '//*[@class="entry"]//img[1]', // just a common pattern
-                    '//*[@class="entryContent"]//img[1]', // ThinkProgress
-                    '//*[@class="entry-content"]//*[@class="image"]/img[1]', // NYMag.com
-                    '//*[@class="storyimage"]/img[1]', // Xtra.ca
-                    '//*[contains(@class, "hentry")]//img[1]' // microformat pattern
-                );
+        $xpaths = (is_string($this->options['img_pats'])) ?
+            explode("\n", $this->options['img_pats']) : $this->options['img_pats'];
         try {
             @$dom  = DOMDocument::loadHTML($html);
             $xpath = new DOMXpath($dom);
@@ -113,6 +124,7 @@ class WP_AutoImageGrabber {
 }
 
 $WP_AutoImageGrabber = new WP_AutoImageGrabber();
+register_activation_hook(__FILE__, array($WP_AutoImageGrabber, 'activate'));
 add_filter('the_content', array($WP_AutoImageGrabber, 'filterContent'));
 
 function WP_AutoImageGrabber_menu () {
@@ -124,7 +136,6 @@ add_action('admin_menu', 'WP_AutoImageGrabber_menu');
  * Provides plugin-wide options screen.
  */
 function WP_AutoImageGrabber_options () {
-    add_option('wp_aig_options', get_option('wp_aig_options'));
     $options = get_option('wp_aig_options');
 ?>
 <div class="wrap">
@@ -139,7 +150,7 @@ function WP_AutoImageGrabber_options () {
         <tr valign="top">
             <th scope="row"><label for="wp_aig_options[img_class]">Image class value</label></th>
             <td>
-            <input type="text" id="wp_aig_options[img_class]" name="wp_aig_options[img_class]" value="<?php print $options['img_class'];?>" /><br />
+                <input type="text" id="wp_aig_options[img_class]" name="wp_aig_options[img_class]" class="regular-text" value="<?php print htmlentities($options['img_class'], ENT_QUOTES, "UTF-8");?>" /><br />
                 <span class="setting-description">The class name of the automatically-added <code>&lt;img&gt;</code> element. (Defaults to <code>wp-auto-image-grabber alignright</code>.)</span>
             </td>
         </tr>
@@ -147,8 +158,16 @@ function WP_AutoImageGrabber_options () {
         <tr valign="top">
             <th scope="row"><label for="wp_aig_options[dst_page]">Pointer element for destination page</label></th>
             <td>
-            <input type="text" id="wp_aig_options[dst_page]" name="wp_aig_options[dst_page]" value="<?php print htmlentities($options['dst_page'], ENT_QUOTES, "UTF-8");?>" /><br />
+                <input type="text" id="wp_aig_options[dst_page]" name="wp_aig_options[dst_page]" class="regular-text" value="<?php print htmlentities($options['dst_page'], ENT_QUOTES, "UTF-8");?>" /><br />
                 <span class="setting-description">The XPath query returning the element pointing to the remote page. Should be an <code>&lt;a&gt;</code> element. (Defaults to <code>//a[1]</code>.)</span>
+            </td>
+        </tr>
+
+        <tr valign="top">
+            <th scope="row"><label for="wp_aig_options[img_pats]">Image patterns</label></th>
+            <td>
+                <textarea id="wp_aig_options[img_pats]" name="wp_aig_options[img_pats]" rows="15" cols="60"><?php print htmlentities($options['img_pats'], ENT_QUOTES, "UTF-8");?></textarea><br />
+                <span class="setting-description">Set of ordered XPath queries used to locate a main image in remote sites, one per line. Put more specific queries on top, more general patterns at bottom.</span>
             </td>
         </tr>
     </table>

@@ -5,7 +5,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=TJLPJ
 Tags: images, automation
 Requires at least: 2.6
 Tested up to: 3.0.1
-Stable tag: 0.2
+Stable tag: 0.3
 
 Inserts an image from a page you link to at the start of your blog post. A simple algorithm tries to get a "main content" image, not an ad.
 
@@ -50,6 +50,11 @@ No, not at this time, but I'm hoping to add this optional capability to future v
 1. The WP-Auto Image Grabber plugin options.
 
 == Changelog ==
+
+= 0.3 =
+* New option to customize the remote main image search patterns.
+* Fix bug where plugin didn't activate with proper default options.
+* Minor code cleanup.
 
 = 0.2 =
 * Minor code clarity improvements, more comprehensive "main image" pattern matching.
