@@ -3,7 +3,7 @@
 Plugin Name: WP-Auto Image Grabber
 Plugin URI: http://maymay.net/blog/projects/wp-auto-image-grabber/
 Description: Fetches images from a remote source and displays them by deep-linking to the source.
-Version: 0.3
+Version: 0.3.1
 Author: Meitar Moscovitz
 Author URI: http://maymay.net/
 */
@@ -96,7 +96,11 @@ class WP_AutoImageGrabber {
             explode("\n", $this->options['img_pats']) : $this->options['img_pats'];
         try {
             @$dom  = DOMDocument::loadHTML($html);
-            $xpath = new DOMXpath($dom);
+            if ($dom) {
+                $xpath = new DOMXpath($dom); // avoid passing FALSE
+            } else {
+                return false;
+            }
         } catch (Exception $e) { /* fail silently; do nothing */ }
         foreach ($xpaths as $xquery) {
             $results = $xpath->query($xquery);

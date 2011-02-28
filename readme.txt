@@ -4,8 +4,8 @@ Plugin URL: http://maymay.net/blog/projects/wp-auto-image-grabber/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=TJLPJYXHSRBEE&lc=US&item_name=Donation%20to%20support%20WP%2dAuto%20Image%20Grabber%20plugin&item_number=wp%2dauto%2dimage%2dgrabber&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: images, automation
 Requires at least: 2.6
-Tested up to: 3.0.1
-Stable tag: 0.3
+Tested up to: 3.1
+Stable tag: 0.3.1
 
 Inserts an image from a page you link to at the start of your blog post. A simple algorithm tries to get a "main content" image, not an ad.
 
@@ -50,6 +50,9 @@ No, not at this time, but I'm hoping to add this optional capability to future v
 1. The WP-Auto Image Grabber plugin options.
 
 == Changelog ==
+
+= 0.3.1 =
+* Fix bug causing plugin to throw fatal error when remote document could not be parsed.
 
 = 0.3 =
 * New option to customize the remote main image search patterns.
